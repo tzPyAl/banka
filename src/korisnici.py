@@ -4,8 +4,8 @@ from .settings import banka
 class Korisnici:
     def __init__(self, id, ime, prezime, pin, tvrtka=None):
         self.id = id
-        self.ime = ime.lower()
-        self.prezime = prezime.lower()
+        self.ime = ime.capitalize()
+        self.prezime = prezime.capitalize()
         self.tvrtka = tvrtka
         self.pin = pin
         self.stanje = 0

@@ -16,6 +16,6 @@ banka = {
 }
 
 app_settings = {
-    "skip_admin_login": True,
+    "skip_admin_login": False,
     "dozvoljeno_prekoracenje": -1000
 }
