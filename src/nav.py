@@ -1,4 +1,4 @@
-from .settings import korisnici_u_bazi, banka, app_settings
+from .settings import korisnici_u_bazi, banka, app_settings, transaction_history
 from .korisnici import Korisnici
 
 korisnik_trenutni = 0
@@ -33,7 +33,7 @@ def railroader(value):
         case "Prikaz stanja računa":
             stanje_na_racunu()
         case "Prikaz prometa po računu":
-            print("Prikaz prometa po računu")
+            show_transactions()
         case "Polog novca na račun":
             polog_na_racun(vrsta_transakcije="polog")
         case "Podizanje novca s računa":
@@ -147,13 +147,24 @@ def polog_na_racun(vrsta_transakcije):
         else:
             ispravan_unos = True
             if vrsta_transakcije == "polog":
-                novo_stanje = trenutno - iznos_pologa
+                novo_stanje = trenutno + iznos_pologa
             elif vrsta_transakcije == "podizanje":
                 novo_stanje = trenutno - iznos_pologa
                 if novo_stanje <= app_settings['dozvoljeno_prekoracenje']:
                     print(f"Transakcija odbijena! Stanje na racunu {banka['simbol_valute']}{novo_stanje} prelazi maksimalno dozvoljeno prekoracenje od {banka['simbol_valute']}{app_settings['dozvoljeno_prekoracenje']}")
                     ispravan_unos = False
 
+    # spremi transakciju
+    transaction_hold = {"id": len(transaction_history),
+                        "iznos_transakcije": iznos_pologa,
+                        "stanje_racuna": novo_stanje,
+                        "iban": korisnici_u_bazi[korisnik_trenutni]['iban']}
+    transaction_history.append(transaction_hold)
     korisnici_u_bazi[korisnik_trenutni]['stanje'] = novo_stanje
     print(f"\nUspjesno izvrseno. Novo stanje računa: {banka['simbol_valute']}{novo_stanje}")
     print_izbornika(izbornik_korisnik)
+
+def show_transactions():
+    import json
+    print("\nPrikaz svih transakcija: ")
+    print(json.dumps(transaction_history, indent=4))
