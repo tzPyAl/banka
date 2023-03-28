@@ -17,7 +17,8 @@ banka = {
 
 app_settings = {
     "skip_admin_login": False,
-    "dozvoljeno_prekoracenje": -1000
+    "dozvoljeno_prekoracenje": -1000,
+    "kamata_na_stednju": 0.0000001
 }
 
 transaction_history = []

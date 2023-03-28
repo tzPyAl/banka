@@ -22,7 +22,8 @@ izbornik_korisnik = {
     2: "Prikaz prometa po računu",
     3: "Polog novca na račun",
     4: "Podizanje novca s računa",
-    5: "Povratak na glavni izbornik"
+    5: "Povratak na glavni izbornik",
+    6: "Orocenje"
 }
 
 
@@ -40,6 +41,8 @@ def railroader(value):
             polog_na_racun(vrsta_transakcije="podizanje")
         case "Povratak na glavni izbornik":
             print_izbornika(izbornik_glavni)
+        case "Orocenje":
+            orocenje()
         case "Kreiranje novog korisnika":
             kreiranje_novog_korisnika()
         case "Postojeci korisnik":
@@ -153,14 +156,8 @@ def polog_na_racun(vrsta_transakcije):
                 if novo_stanje <= app_settings['dozvoljeno_prekoracenje']:
                     print(f"Transakcija odbijena! Stanje na racunu {banka['simbol_valute']}{novo_stanje} prelazi maksimalno dozvoljeno prekoracenje od {banka['simbol_valute']}{app_settings['dozvoljeno_prekoracenje']}")
                     ispravan_unos = False
-
-    # spremi transakciju
-    transaction_hold = {"id": len(transaction_history),
-                        "iznos_transakcije": iznos_pologa,
-                        "stanje_racuna": novo_stanje,
-                        "iban": korisnici_u_bazi[korisnik_trenutni]['iban']}
-    transaction_history.append(transaction_hold)
     korisnici_u_bazi[korisnik_trenutni]['stanje'] = novo_stanje
+    save_transaction(vrsta_transakcije=vrsta_transakcije, iznos=iznos_pologa)
     print(f"\nUspjesno izvrseno. Novo stanje računa: {banka['simbol_valute']}{novo_stanje}")
     print_izbornika(izbornik_korisnik)
 
@@ -168,3 +165,35 @@ def show_transactions():
     import json
     print("\nPrikaz svih transakcija: ")
     print(json.dumps(transaction_history, indent=4))
+
+def save_transaction(vrsta_transakcije, iznos):
+    transaction_hold = {"id": len(transaction_history),
+                    "iznos_transakcije": iznos,
+                    "stanje_racuna": korisnici_u_bazi[korisnik_trenutni]['stanje'],
+                    "iban": korisnici_u_bazi[korisnik_trenutni]['iban'],
+                    "vrsta_transakcije": vrsta_transakcije}
+    transaction_history.append(transaction_hold)
+
+def orocenje():
+    trenutno = int(korisnici_u_bazi[korisnik_trenutni]['stanje'])
+    print(f"Trenutno raspolozivo za orocenje: {banka['simbol_valute']}{trenutno}")
+
+    ispravan_unos = False
+    try:
+        iznos_orocenja = int(input(f"Iznos koji korisnik zeli orociti: {banka['simbol_valute']}"))
+    except ValueError:
+        print("Unos mora biti brojcani.")
+    else:
+        if iznos_orocenja <= int(korisnici_u_bazi[korisnik_trenutni]['stanje']):
+            # vrati se na korisnički izbornik
+            print("Nedovoljan iznos na racunu")
+            print_izbornika(izbornik_korisnik)   
+        else:
+            just_for_fun = input("Unesite iznos kamate: ")
+            print(f"...sala, iznos kamate je fiksan na {app_settings['kamata_na_stednju']*100}%")
+            korisnici_u_bazi[korisnik_trenutni]['stanje'] -= iznos_orocenja # spremi novo stanje, vec smo provjeriti da je moguce
+            save_transaction(vrsta_transakcije="orocenje", iznos=iznos_orocenja) # spremi transakciju orocenja
+            # pohvala
+            print(f"Uspjesno polozeno {banka['simbol_valute']}{iznos_orocenja} s kamatom {app_settings['kamata_na_stednju']*100}%.")
+            stanje_na_racunu()
+            
