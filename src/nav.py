@@ -167,11 +167,16 @@ def show_transactions():
     print(json.dumps(transaction_history, indent=4))
 
 def save_transaction(vrsta_transakcije, iznos):
+    from datetime import datetime
+    now = datetime.now()
     transaction_hold = {"id": len(transaction_history),
+                    "datum_transakcije": now.strftime("%d.%m:%Y"),
+                    "vrijeme_transakcije": now.strftime("%H:%M:%S"),
                     "iznos_transakcije": iznos,
                     "stanje_racuna": korisnici_u_bazi[korisnik_trenutni]['stanje'],
                     "iban": korisnici_u_bazi[korisnik_trenutni]['iban'],
-                    "vrsta_transakcije": vrsta_transakcije}
+                    "vrsta_transakcije": vrsta_transakcije,
+                    "korisnik": korisnici_u_bazi[korisnik_trenutni]['ime']}
     transaction_history.append(transaction_hold)
 
 def orocenje():
