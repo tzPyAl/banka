@@ -25,8 +25,9 @@ Program za sada izvršava u konzoli Funkcionalnosti:
 - polog i podizanje novca s korisnickog racuna
 - dozvoljeno prekoracenje
 
-## Funkcionalnosti koje nedostaju
+## Funkcionalnosti dodane kao zahtjevi parcijalnog zadatka 1
 
-- povijest transakcija
+- spremanje i pregled svih transakcija
+- mogucnost orocenja s fiksnom kamatom i fiksnim trajanjem
 
 **Min Requirements:** python >= 3.10

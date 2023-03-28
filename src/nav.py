@@ -192,7 +192,7 @@ def orocenje():
             just_for_fun = input("Unesite iznos kamate: ")
             print(f"...sala, iznos kamate je fiksan na {app_settings['kamata_na_stednju']*100}%")
             korisnici_u_bazi[korisnik_trenutni]['stanje'] -= iznos_orocenja # spremi novo stanje, vec smo provjeriti da je moguce
-            save_transaction(vrsta_transakcije="orocenje", iznos=iznos_orocenja) # spremi transakciju orocenja
+            save_transaction(vrsta_transakcije="orocenje na 12 mjeseci", iznos=iznos_orocenja) # spremi transakciju orocenja
             # pohvala
             print(f"Uspjesno polozeno {banka['simbol_valute']}{iznos_orocenja} s kamatom {app_settings['kamata_na_stednju']*100}%.")
             stanje_na_racunu()
